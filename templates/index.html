@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareSync - Hospital Management System</title>
+    
+    <!-- Google Fonts (Outfit & Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Custom Style Sheet -->
+    <style>
+        :root { --primary: #4f46e5; --primary-light: #818cf8; --primary-dark: #3730a3; --success: #10b981; --info: #06b6d4; --warning: #f59e0b; --danger: #f43f5e; --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1; --slate-700: #334155; --slate-800: #1e293b; --slate-900: #0f172a; --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%); --gradient-danger: linear-gradient(135deg, #f43f5e 0%, #be123c 100%); --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); --gradient-info: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); --gradient-sidebar: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); --sidebar-width: 260px; --header-height: 70px; --border-radius-sm: 8px; --border-radius-md: 12px; --border-radius-lg: 16px; --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02); --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05); --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); --shadow-glow: 0 0 15px rgba(79, 70, 229, 0.15); --transition-fast: 0.2s ease; --transition-normal: 0.3s ease; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--slate-50); color: var(--slate-700); min-height: 100vh; overflow-x: hidden; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; font-weight: 600; color: var(--slate-900); }
+        a { text-decoration: none; color: inherit; }
+        .app-container { display: flex; min-height: 100vh; position: relative; }
+        .app-sidebar { width: var(--sidebar-width); background: var(--gradient-sidebar); color: var(--slate-300); display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 1040; transition: transform var(--transition-normal); box-shadow: 4px 0 20px rgba(15, 23, 42, 0.15); }
+        .sidebar-header { height: var(--header-height); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .brand-logo { display: flex; align-items: center; gap: 0.75rem; font-size: 1.35rem; font-family: 'Outfit', sans-serif; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+        .brand-icon { font-size: 1.5rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-sidebar-close { background: none; border: none; color: var(--slate-300); font-size: 1.25rem; cursor: pointer; }
+        .sidebar-menu { padding: 1.5rem 1rem; flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.4rem; }
+        .menu-item { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border-radius: var(--border-radius-sm); font-weight: 500; font-size: 0.95rem; transition: all var(--transition-fast); }
+        .menu-item i { font-size: 1.15rem; opacity: 0.85; }
+        .menu-item:hover { background: rgba(255, 255, 255, 0.05); color: #fff; transform: translateX(3px); }
+        .menu-item.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .sidebar-footer { padding: 1.25rem; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+        .user-profile { display: flex; align-items: center; gap: 0.75rem; }
+        .user-profile .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.95rem; }
+        .user-details { display: flex; flex-direction: column; }
+        .user-details .name { font-size: 0.85rem; font-weight: 600; color: #fff; }
+        .user-details .role { font-size: 0.75rem; color: var(--slate-100); opacity: 0.7; }
+        .main-wrapper { flex-grow: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
+        .app-header { height: var(--header-height); background-color: #fff; border-bottom: 1px solid var(--slate-200); display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; position: sticky; top: 0; z-index: 1000; }
+        .header-left { display: flex; align-items: center; }
+        .header-title h1 { font-size: 1.35rem; margin-bottom: 0; }
+        .btn-sidebar-toggle { background: none; border: none; color: var(--slate-700); cursor: pointer; }
+        .header-right { display: flex; align-items: center; }
+        .date-widget { background-color: var(--slate-100); padding: 0.4rem 0.8rem; border-radius: var(--border-radius-sm); font-size: 0.85rem; font-weight: 500; }
+        .badge-notify { position: relative; cursor: pointer; color: var(--slate-700); }
+        .notify-dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%; border: 1px solid #fff; }
+        .app-content { padding: 2rem; flex-grow: 1; }
+        .app-footer { padding: 1.5rem 2rem; background-color: #fff; border-top: 1px solid var(--slate-200); text-align: center; font-size: 0.85rem; color: var(--slate-700); opacity: 0.8; }
+        .card-metric { border: none; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md); background-color: #fff; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; transition: transform var(--transition-normal), box-shadow var(--transition-normal); }
+        .card-metric:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .metric-details h5 { font-size: 0.85rem; font-weight: 600; color: var(--slate-700); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+        .metric-value { font-size: 2rem; font-weight: 700; color: var(--slate-900); line-height: 1; }
+        .metric-icon-box { width: 50px; height: 50px; border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #fff; }
+ .metric-icon-box.primary { background: var(--gradient-primary); }
+ .metric-icon-box.success { background: var(--gradient-success); }
+ .metric-icon-box.warning { background: var(--gradient-warning); }
+ .metric-icon-box.danger { background: var(--gradient-danger); }
+ .metric-icon-box.info { background: var(--gradient-info); }
+        .table-responsive-custom { background-color: #fff; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md); border: none; overflow: hidden; }
+        .table-custom { margin-bottom: 0; width: 100%; }
+        .table-custom th { background-color: var(--slate-100); color: var(--slate-800); font-weight: 600; font-family: 'Outfit', sans-serif; font-size: 0.9rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--slate-200); }
+        .table-custom td { padding: 1rem 1.25rem; vertical-align: middle; font-size: 0.9rem; border-bottom: 1px solid var(--slate-100); transition: background-color var(--transition-fast); }
+        .table-custom tr:last-child td { border-bottom: none; }
+        .table-custom tbody tr:hover td { background-color: rgba(79, 70, 229, 0.02); }
+        .badge-status { padding: 0.4rem 0.75rem; border-radius: 50px; font-weight: 600; font-size: 0.75rem; display: inline-block; }
+        .badge-status.scheduled { background-color: rgba(79, 70, 229, 0.1); color: var(--primary); }
+        .badge-status.completed { background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-status.cancelled { background-color: rgba(244, 63, 94, 0.1); color: var(--danger); }
+        .badge-status.pending { background-color: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .badge-status.dispensed { background-color: rgba(6, 182, 212, 0.1); color: var(--info); }
+        .btn-action { width: 32px; height: 32px; border-radius: var(--border-radius-sm); display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--slate-200); background-color: #fff; color: var(--slate-700); cursor: pointer; transition: all var(--transition-fast); }
+        .btn-action:hover { background-color: var(--primary); color: #fff; border-color: var(--primary); }
+        .btn-action.btn-danger-action:hover { background-color: var(--danger); color: #fff; border-color: var(--danger); }
+        .form-card { border: none; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md); background-color: #fff; border: 1px solid var(--slate-200); }
+        .form-card .card-header { background-color: #fff; border-bottom: 1px solid var(--slate-100); padding: 1.25rem 1.5rem; }
+        .form-card .card-header h2 { font-size: 1.15rem; margin-bottom: 0; }
+        .form-card .card-body { padding: 1.5rem; }
+        .form-label { font-weight: 500; font-size: 0.85rem; color: var(--slate-800); margin-bottom: 0.4rem; }
+        .form-control-custom { border: 1px solid var(--slate-200); border-radius: var(--border-radius-sm); padding: 0.65rem 0.9rem; font-size: 0.9rem; transition: all var(--transition-fast); background-color: #fff; color: var(--slate-800); }
+        .form-control-custom:focus { border-color: var(--primary-light); box-shadow: var(--shadow-glow); outline: none; }
+        .custom-alert { border: none; border-radius: var(--border-radius-md); padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+        .alert-message { display: flex; align-items: center; font-size: 0.9rem; font-weight: 500; }
+        .btn-primary-gradient { background: var(--gradient-primary); border: none; color: #fff; font-weight: 600; font-family: 'Outfit', sans-serif; border-radius: var(--border-radius-sm); padding: 0.65rem 1.25rem; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2); transition: all var(--transition-fast); }
+        .btn-primary-gradient:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(79, 70, 229, 0.3); color: #fff; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.08) !important; }
+        @media (max-width: 991.98px) {
+        .app-sidebar { transform: translateX(-100%); }
+        .app-sidebar.show { transform: translateX(0); }
+        .main-wrapper { margin-left: 0; }
+        .app-header { padding: 0 1rem; }
+        .app-content { padding: 1rem; }
+ }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); }
+ to { opacity: 1; transform: translateY(0); }
+ }
+        .animate-fade-in { animation: fadeIn var(--transition-normal) forwards; }
+    </style>
+</head>
+<body>
+
+    <!-- Responsive Layout Wrapper -->
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation (Only visible when logged in) -->
+        {% if active_page != 'login' %}
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <i class="bi bi-heart-pulse-fill brand-icon"></i>
+                    <span>CareSync</span>
+                </div>
+                <button class="btn-sidebar-close d-lg-none" onclick="toggleSidebar()"><i class="bi bi-x-lg"></i></button>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="{{ url_for('dashboard') }}" class="menu-item {% if active_page == 'dashboard' %}active{% endif %}">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                {% if session['role'] == 'admin' %}
+                    <a href="{{ url_for('patients_list') }}" class="menu-item {% if active_page == 'patients' %}active{% endif %}">
+                        <i class="bi bi-people-fill"></i>
+                        <span>OP Patients</span>
+                    </a>
+                    <a href="{{ url_for('doctors_list') }}" class="menu-item {% if active_page == 'doctors' %}active{% endif %}">
+                        <i class="bi bi-person-badge-fill"></i>
+                        <span>Doctors</span>
+                    </a>
+                    <a href="{{ url_for('appointments_list') }}" class="menu-item {% if active_page == 'appointments' %}active{% endif %}">
+                        <i class="bi bi-calendar-event-fill"></i>
+                        <span>Appointments</span>
+                    </a>
+                    <a href="{{ url_for('medicines_list') }}" class="menu-item {% if active_page == 'medicines' %}active{% endif %}">
+                        <i class="bi bi-capsule"></i>
+                        <span>Medicines</span>
+                    </a>
+                    <a href="{{ url_for('prescriptions_list') }}" class="menu-item {% if active_page == 'prescriptions' %}active{% endif %}">
+                        <i class="bi bi-prescription"></i>
+                        <span>Prescriptions</span>
+                    </a>
+                {% endif %}
+                
+                <!-- Logout Trigger -->
+                <a href="{{ url_for('logout') }}" class="menu-item mt-auto text-danger-hover">
+                    <i class="bi bi-box-arrow-left"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar bg-primary-subtle text-primary">
+                        {{ session['user_name'][:2] | upper if session['user_name'] else 'US' }}
+                    </div>
+                    <div class="user-details">
+                        <span class="name">{{ session['user_name'] or 'User' }}</span>
+                        <span class="role">
+                            {% if session['role'] == 'admin' %}System Admin
+                            {% elif session['role'] == 'doctor' %}Doctor Portal
+                            {% else %}Patient Portal{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        {% endif %}
+
+        <!-- Main Content Area -->
+        <div class="main-wrapper" style="{% if active_page == 'login' %}margin-left: 0; background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.08) 0%, rgba(248, 250, 252, 1) 100%);{% endif %}">
+            
+            <!-- Top Navbar Header (Hidden on Login) -->
+            {% if active_page != 'login' %}
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="btn-sidebar-toggle d-lg-none me-3" onclick="toggleSidebar()">
+                        <i class="bi bi-list fs-4"></i>
+                    </button>
+                    <div class="header-title">
+                        {% if active_page == 'dashboard' %}
+                            <h1>Hospital Portal</h1>
+                        {% elif active_page == 'patients' %}
+                            <h1>OP Registration & Patients</h1>
+                        {% elif active_page == 'doctors' %}
+                            <h1>Doctor Directory</h1>
+                        {% elif active_page == 'appointments' %}
+                            <h1>Appointment Manager</h1>
+                        {% elif active_page == 'medicines' %}
+                            <h1>Pharmacy Inventory</h1>
+                        {% elif active_page == 'prescriptions' %}
+                            <h1>Medicine Prescriptions</h1>
+                        {% else %}
+                            <h1>System Notice</h1>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div class="date-widget d-none d-md-flex">
+                        <i class="bi bi-clock me-2"></i>
+                        <span id="currentDate">Loading...</span>
+                    </div>
+                    <div class="badge-notify ms-3">
+                        <i class="bi bi-bell-fill fs-5"></i>
+                        <span class="notify-dot"></span>
+                    </div>
+                </div>
+            </header>
+            {% endif %}
+            
+            <!-- Body Content -->
+            <main class="app-content">
+                
+                <!-- System Alerts (Flash Messages) -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages-container {% if active_page == 'login' %}mx-auto{% endif %}" style="{% if active_page == 'login' %}max-width: 450px; margin-top: 1rem;{% endif %}">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show custom-alert shadow-sm mb-3" role="alert">
+                                    <div class="alert-message">
+                                        {% if category == 'success' %}
+                                            <i class="bi bi-check-circle-fill me-2"></i>
+                                        {% elif category == 'danger' or category == 'error' %}
+                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        {% else %}
+                                            <i class="bi bi-info-circle-fill me-2"></i>
+                                        {% endif %}
+                                        {{ message }}
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <!-- CONDITIONAL VIEWS RENDERING -->
+                {% if content_error %}
+                    <div class="error-page card shadow-lg text-center p-5 mx-auto mt-5" style="max-width: 550px; border-radius: 16px; border: none; background: rgba(255,255,255,0.85); backdrop-filter: blur(10px);">
+                        <div class="error-icon text-danger mb-4" style="font-size: 5rem;">
+                            <i class="bi bi-exclamation-octagon-fill"></i>
+                        </div>
+                        <h2 class="fw-bold text-slate-800 mb-3">{{ content_error.split(' - ')[0] }}</h2>
+                        <p class="text-secondary mb-4">{{ content_error.split(' - ')[1] }}</p>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary px-4 py-2" style="border-radius: 8px; font-weight: 500;">
+                            <i class="bi bi-house-door-fill me-2"></i>Return to Dashboard
+                        </a>
+                    </div>
+                
+                {% elif active_page == 'login' %}
+                    <!-- ----------------- 0. LOGIN PAGE ----------------- -->
+                    <div class="d-flex flex-column align-items-center justify-content-center min-vh-100 p-3">
+                        <div class="card border-0 shadow-lg" style="width: 460px; border-radius: 20px; overflow: hidden; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5);">
+                            
+                            <div class="text-center p-4 text-white" style="background: var(--gradient-primary);">
+                                <i class="bi bi-heart-pulse-fill fs-1 mb-2"></i>
+                                <h3 class="fw-bold mb-1">CareSync HMS</h3>
+                                <p class="mb-0 text-white-50 text-sm" style="font-size: 0.9rem;">Hospital Management System Portal</p>
+                            </div>
+                            
+                            <div class="card-body p-4">
+                                <!-- Tab Selection Headers -->
+                                <ul class="nav nav-pills nav-fill mb-4 p-1 bg-light rounded-pill" id="loginTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active rounded-pill text-xs fw-semibold" style="font-size:0.85rem;" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin-panel" type="button" role="tab">Admin</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link rounded-pill text-xs fw-semibold" style="font-size:0.85rem;" id="doctor-tab" data-bs-toggle="tab" data-bs-target="#doctor-panel" type="button" role="tab">Doctor</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link rounded-pill text-xs fw-semibold" style="font-size:0.85rem;" id="patient-tab" data-bs-toggle="tab" data-bs-target="#patient-panel" type="button" role="tab">Patient</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link rounded-pill text-xs fw-semibold" style="font-size:0.85rem;" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-panel" type="button" role="tab">Register</button>
+                                    </li>
+                                </ul>
+                                
+                                <div class="tab-content" id="loginTabContent">
+                                    <!-- A. Admin Login Form -->
+                                    <div class="tab-pane fade show active" id="admin-panel" role="tabpanel">
+                                        <form action="{{ url_for('login') }}" method="POST" class="needs-validation" novalidate>
+                                            <input type="hidden" name="role" value="admin">
+                                            <div class="mb-3">
+                                                <label class="form-label">Username</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="bi bi-person text-secondary"></i></span>
+                                                    <input type="text" class="form-control form-control-custom" name="username" required placeholder="admin">
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Password</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="bi bi-lock text-secondary"></i></span>
+                                                    <input type="password" class="form-control form-control-custom" name="password" required placeholder="••••••••">
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary-gradient w-100 mt-3">Access Admin Console</button>
+                                            <div class="text-center mt-3"><small class="text-secondary">Default Demo: admin / admin123</small></div>
+                                        </form>
+                                    </div>
+                                    
+                                    <!-- B. Doctor Login Form -->
+                                    <div class="tab-pane fade" id="doctor-panel" role="tabpanel">
+                                        <form action="{{ url_for('login') }}" method="POST" class="needs-validation" novalidate>
+                                            <input type="hidden" name="role" value="doctor">
+                                            <div class="mb-3">
+                                                <label class="form-label">Email Address</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="bi bi-envelope text-secondary"></i></span>
+                                                    <input type="email" class="form-control form-control-custom" name="username" required placeholder="doctor@hospital.com">
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Password</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="bi bi-lock text-secondary"></i></span>
+                                                    <input type="password" class="form-control form-control-custom" name="password" required placeholder="••••••••">
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary-gradient w-100 mt-3" style="background: var(--gradient-success);">Doctor Secure Sign-In</button>
+                                            <div class="text-center mt-3"><small class="text-secondary">Demo Doctor: sarah.jenkins@hospital.com / doctor123</small></div>
+                                        </form>
+                                    </div>
+                                    
+                                    <!-- C. Patient Login Form -->
+                                    <div class="tab-pane fade" id="patient-panel" role="tabpanel">
+                                        <form action="{{ url_for('login') }}" method="POST" class="needs-validation" novalidate>
+                                            <input type="hidden" name="role" value="patient">
+                                            <div class="mb-3">
+                                                <label class="form-label">Email or OP Number</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="bi bi-file-person text-secondary"></i></span>
+                                                    <input type="text" class="form-control form-control-custom" name="username" required placeholder="john.doe@email.com or OP-2026-0001">
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Password</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="bi bi-lock text-secondary"></i></span>
+                                                    <input type="password" class="form-control form-control-custom" name="password" required placeholder="••••••••">
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary-gradient w-100 mt-3" style="background: var(--gradient-warning);">Patient Portal Login</button>
+                                            <div class="text-center mt-3"><small class="text-secondary">Demo Patient: OP-2026-0001 / patient123</small></div>
+                                        </form>
+                                    </div>
+
+                                    <!-- D. Patient Registration Form -->
+                                    <div class="tab-pane fade" id="register-panel" role="tabpanel">
+                                        <form action="{{ url_for('register') }}" method="POST" class="needs-validation" novalidate>
+                                            <div class="mb-2">
+                                                <label class="form-label text-xs" style="font-size: 0.8rem; font-weight: 500;">Full Name *</label>
+                                                <input type="text" class="form-control form-control-custom" name="name" required placeholder="e.g. John Doe">
+                                            </div>
+                                            <div class="row g-2 mb-2">
+                                                <div class="col-6">
+                                                    <label class="form-label text-xs" style="font-size: 0.8rem; font-weight: 500;">Age *</label>
+                                                    <input type="number" class="form-control form-control-custom" name="age" min="1" max="120" required placeholder="30">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label text-xs" style="font-size: 0.8rem; font-weight: 500;">Gender *</label>
+                                                    <select class="form-select form-control-custom" name="gender" required>
+                                                        <option value="" disabled selected>Select</option>
+                                                        <option value="Male">Male</option>
+                                                        <option value="Female">Female</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label text-xs" style="font-size: 0.8rem; font-weight: 500;">Phone *</label>
+                                                <input type="text" class="form-control form-control-custom" name="phone" required placeholder="e.g. 555-0199">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label text-xs" style="font-size: 0.8rem; font-weight: 500;">Email Address *</label>
+                                                <input type="email" class="form-control form-control-custom" name="email" required placeholder="john@email.com">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label text-xs" style="font-size: 0.8rem; font-weight: 500;">Password *</label>
+                                                <input type="password" class="form-control form-control-custom" name="password" required placeholder="Create password">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label text-xs" style="font-size: 0.8rem; font-weight: 500;">Address</label>
+                                                <textarea class="form-control form-control-custom" name="address" rows="1.5" placeholder="Address details..."></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary-gradient w-100" style="background: var(--gradient-primary);">Sign Up & Access Portal</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Credentials Help Card -->
+                        <div class="mt-4 text-center">
+                            <button class="btn btn-sm btn-light border shadow-sm px-4 py-2" type="button" data-bs-toggle="collapse" data-bs-target="#credentialsDirectory" aria-expanded="false" style="border-radius: 50px; font-size: 0.85rem; font-weight: 600; background: white; color: var(--slate-700);">
+                                <i class="bi bi-key-fill text-warning me-2"></i>Show Demo Accounts Directory
+                            </button>
+                            
+                            <div class="collapse mt-3" id="credentialsDirectory" style="width: 460px; text-align: left;">
+                                <div class="card border-0 shadow-lg p-3" style="border-radius: 16px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
+                                    <h6 class="fw-bold border-bottom pb-2 mb-3"><i class="bi bi-journal-text me-2 text-primary"></i>Demo Access Accounts</h6>
+                                    
+                                    <!-- Admin Credentials -->
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span class="badge bg-primary px-2.5 py-1" style="font-size:0.75rem;">System Admin</span>
+                                            <button class="btn btn-link btn-sm text-decoration-none text-primary p-0 js-copy-autofill-btn" data-username="admin" data-password="admin123" data-role="admin"><i class="bi bi-clipboard me-1"></i>Copy & Autofill</button>
+                                        </div>
+                                        <div class="bg-light p-2 rounded mt-1.5" style="font-family: monospace; font-size:0.8rem;">
+                                            <div><strong>Username:</strong> admin</div>
+                                            <div><strong>Password:</strong> admin123</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Doctor Credentials -->
+                                    <div class="mb-3">
+                                        <h6 class="fw-bold text-xs text-secondary text-uppercase mb-1.5" style="font-size:0.75rem;">Doctors Directory</h6>
+                                        <div style="max-height: 120px; overflow-y: auto;">
+                                            {% for doc in all_doctors %}
+                                            <div class="border-bottom border-light py-2 d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <div class="fw-semibold text-dark" style="font-size:0.8rem;">{{ doc.name }} ({{ doc.specialization }})</div>
+                                                    <div class="text-secondary text-xs" style="font-size:0.75rem;">{{ doc.email }}</div>
+                                                </div>
+                                                <button class="btn btn-outline-secondary btn-xs px-2 py-0.5 js-copy-autofill-btn" style="font-size:0.7rem; border-radius:4px;" data-username="{{ doc.email }}" data-password="{{ doc.password }}" data-role="doctor">Copy & Autofill</button>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Patient Credentials -->
+                                    <div>
+                                        <h6 class="fw-bold text-xs text-secondary text-uppercase mb-1.5" style="font-size:0.75rem;">Patients Directory</h6>
+                                        <div style="max-height: 120px; overflow-y: auto;">
+                                            {% for pat in all_patients %}
+                                            <div class="border-bottom border-light py-2 d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <div class="fw-semibold text-dark" style="font-size:0.8rem;">{{ pat.name }} ({{ pat.op_number }})</div>
+                                                    <div class="text-secondary text-xs" style="font-size:0.75rem;">{{ pat.email }}</div>
+                                                </div>
+                                                <button class="btn btn-outline-secondary btn-xs px-2 py-0.5 js-copy-autofill-btn" style="font-size:0.7rem; border-radius:4px;" data-username="{{ pat.email }}" data-password="{{ pat.password }}" data-role="patient">Copy & Autofill</button>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                {% elif active_page == 'dashboard' %}
+                    <!-- ----------------- 1. DYNAMIC DASHBOARDS ----------------- -->
+                    {% if session['role'] == 'admin' %}
+                        <!-- ================= ADMIN DASHBOARD ================= -->
+                        <div class="container-fluid p-0 animate-fade-in">
+                            {% if low_stock_count > 0 %}
+                            <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center mb-4" style="border-radius: 12px; background: rgba(245, 158, 11, 0.1);">
+                                <i class="bi bi-exclamation-triangle-fill text-warning fs-4 me-3"></i>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-dark">Medicine Stock Warning</h6>
+                                    <small class="text-secondary">There are <strong>{{ low_stock_count }}</strong> items in your medicine inventory running low on stock (&lt; 10 units). Please check the pharmacy catalog.</small>
+                                </div>
+                                <a href="{{ url_for('medicines_list') }}" class="btn btn-warning btn-sm ms-auto fw-bold" style="border-radius: 8px;">Restock Inventory</a>
+                            </div>
+                            {% endif %}
+
+                            <div class="row g-4 mb-5">
+                                <div class="col-12 col-sm-6 col-xl-3">
+                                    <div class="card-metric shadow-sm">
+                                        <div class="metric-details">
+                                            <h5>Total Patients</h5>
+                                            <div class="metric-value">{{ patient_count }}</div>
+                                        </div>
+                                        <div class="metric-icon-box primary">
+                                            <i class="bi bi-people-fill"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-xl-3">
+                                    <div class="card-metric shadow-sm">
+                                        <div class="metric-details">
+                                            <h5>Active Doctors</h5>
+                                            <div class="metric-value">{{ doctor_count }}</div>
+                                        </div>
+                                        <div class="metric-icon-box success">
+                                            <i class="bi bi-person-badge-fill"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-xl-3">
+                                    <div class="card-metric shadow-sm">
+                                        <div class="metric-details">
+                                            <h5>Scheduled Appts</h5>
+                                            <div class="metric-value">{{ appointment_count }}</div>
+                                        </div>
+                                        <div class="metric-icon-box warning">
+                                            <i class="bi bi-calendar-event-fill"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-xl-3">
+                                    <div class="card-metric shadow-sm">
+                                        <div class="metric-details">
+                                            <h5>Medicine Catalog</h5>
+                                            <div class="metric-value">{{ medicine_count }}</div>
+                                        </div>
+                                        <div class="metric-icon-box info">
+                                            <i class="bi bi-capsule"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-5">
+                                <h4 class="mb-3 text-slate-800 fw-bold">Quick Administration Actions</h4>
+                                <div class="row g-3">
+                                    <div class="col-6 col-md-3">
+                                        <a href="{{ url_for('patients_list') }}" class="card text-center h-100 border-0 shadow-sm p-3 hover-lift" style="border-radius: 12px; transition: transform 0.2s;">
+                                            <div class="text-primary mb-2" style="font-size: 2rem;"><i class="bi bi-person-plus-fill"></i></div>
+                                            <span class="fw-bold text-dark" style="font-size: 0.9rem;">Register Patient</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <a href="{{ url_for('appointments_list') }}" class="card text-center h-100 border-0 shadow-sm p-3 hover-lift" style="border-radius: 12px; transition: transform 0.2s;">
+                                            <div class="text-success mb-2" style="font-size: 2rem;"><i class="bi bi-calendar-plus-fill"></i></div>
+                                            <span class="fw-bold text-dark" style="font-size: 0.9rem;">Book Appointment</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <a href="{{ url_for('doctors_list') }}" class="card text-center h-100 border-0 shadow-sm p-3 hover-lift" style="border-radius: 12px; transition: transform 0.2s;">
+                                            <div class="text-warning mb-2" style="font-size: 2rem;"><i class="bi bi-person-badge"></i></div>
+                                            <span class="fw-bold text-dark" style="font-size: 0.9rem;">Add New Doctor</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <a href="{{ url_for('medicines_list') }}" class="card text-center h-100 border-0 shadow-sm p-3 hover-lift" style="border-radius: 12px; transition: transform 0.2s;">
+                                            <div class="text-info mb-2" style="font-size: 2rem;"><i class="bi bi-patch-plus-fill"></i></div>
+                                            <span class="fw-bold text-dark" style="font-size: 0.9rem;">Add Medicine</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-4">
+                                <!-- Recent Appointments -->
+                                <div class="col-12 col-xl-7">
+                                    <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px;">
+                                        <div class="d-flex align-items-center justify-content-between mb-4">
+                                            <h4 class="mb-0 fw-bold text-slate-800">Recent Appointments</h4>
+                                            <a href="{{ url_for('appointments_list') }}" class="btn btn-light btn-sm fw-semibold text-primary px-3 py-1.5" style="border-radius: 8px;">View All</a>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover align-middle mb-0">
+                                                <thead>
+                                                    <tr class="text-secondary" style="font-size: 0.85rem; border-bottom: 2px solid var(--slate-100);">
+                                                        <th>OP Number</th>
+                                                        <th>Patient</th>
+                                                        <th>Doctor</th>
+                                                        <th>Date & Time</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% if recent_appointments %}
+                                                        {% for appt in recent_appointments %}
+                                                        <tr style="border-bottom: 1px solid var(--slate-100);">
+                                                            <td class="fw-semibold text-primary">{{ appt.patient.op_number }}</td>
+                                                            <td>{{ appt.patient.name }}</td>
+                                                            <td>{{ appt.doctor.name }}</td>
+                                                            <td>
+                                                                <div class="d-flex flex-column">
+                                                                    <span class="fw-semibold text-dark">{{ appt.appointment_date.strftime('%d-%b-%Y') }}</span>
+                                                                    <small class="text-secondary" style="font-size: 0.75rem;">{{ appt.time_slot }}</small>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <span class="badge-status {{ appt.status.lower() }}">
+                                                                    {{ appt.status }}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <tr>
+                                                            <td colspan="5" class="text-center py-4 text-secondary">No appointments.</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Recent Patients -->
+                                <div class="col-12 col-xl-5">
+                                    <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px;">
+                                        <div class="d-flex align-items-center justify-content-between mb-4">
+                                            <h4 class="mb-0 fw-bold text-slate-800">New Patients</h4>
+                                            <a href="{{ url_for('patients_list') }}" class="btn btn-light btn-sm fw-semibold text-primary px-3 py-1.5" style="border-radius: 8px;">View All</a>
+                                        </div>
+                                        <div class="list-group list-group-flush">
+                                            {% if recent_patients %}
+                                                {% for patient in recent_patients %}
+                                                <div class="list-group-item d-flex justify-content-between align-items-start border-0 px-0 pb-3 mb-3 border-bottom border-light">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 44px; height: 44px;">
+                                                            <i class="bi bi-person-fill fs-5"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="mb-0 fw-bold text-dark">{{ patient.name }}</h6>
+                                                            <small class="text-secondary">OP No: <span class="fw-semibold text-primary">{{ patient.op_number }}</span> • {{ patient.gender }}, {{ patient.age }} yrs</small>
+                                                        </div>
+                                                    </div>
+                                                    <span class="text-secondary" style="font-size: 0.75rem;">
+                                                        {{ patient.registered_at.strftime('%d %b') }}
+                                                    </span>
+                                                </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                <p class="text-center py-4 text-secondary mb-0">No patients registered.</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% elif session['role'] == 'doctor' %}
+                        <!-- ================= DOCTOR PORTAL DASHBOARD ================= -->
+                        <div class="container-fluid p-0 animate-fade-in">
+                            <div class="row g-4">
+                                <!-- 1. Doctor Profile Info & Prescription Form -->
+                                <div class="col-12 col-lg-4">
+                                    <!-- Doctor Details Card -->
+                                    <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 16px; background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%);">
+                                        <h5 class="fw-bold text-slate-800 mb-3"><i class="bi bi-person-badge-fill text-success me-2"></i>Practitioner Profile</h5>
+                                        <h4 class="fw-bold text-dark mb-1">{{ doctor.name }}</h4>
+                                        <p class="text-primary fw-bold mb-3">{{ doctor.specialization }}</p>
+                                        
+                                        <div class="text-secondary" style="font-size: 0.85rem; line-height: 1.8;">
+                                            <div><i class="bi bi-envelope me-2"></i>{{ doctor.email }}</div>
+                                            <div><i class="bi bi-telephone me-2"></i>{{ doctor.phone }}</div>
+                                            <div><i class="bi bi-clock me-2"></i>{{ doctor.availability }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Prescription / Medicine Request Form -->
+                                    <div class="card form-card shadow-sm border-0">
+                                        <div class="card-header bg-white">
+                                            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-capsule-pill text-success me-2"></i>Prescribe Medications</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            {% if patients and medicines %}
+                                            <form action="{{ url_for('prescription_add') }}" method="POST" class="needs-validation" novalidate>
+                                                <!-- Select Patient -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Select Patient *</label>
+                                                    <select class="form-select form-control-custom" name="patient_id" required>
+                                                        <option value="" selected disabled>Choose patient...</option>
+                                                        {% for pat in patients %}
+                                                        <option value="{{ pat.id }}">{{ pat.name }} ({{ pat.op_number }})</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <div class="invalid-feedback">Select patient.</div>
+                                                </div>
+
+                                                <!-- Select Medicine -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Select Medicine *</label>
+                                                    <select class="form-select form-control-custom" name="medicine_id" required>
+                                                        <option value="" selected disabled>Choose medicine...</option>
+                                                        {% for med in medicines %}
+                                                        <option value="{{ med.id }}">{{ med.name }} {% if med.stock_quantity < 10 %}(Low Stock: {{ med.stock_quantity }}){% else %}(In Stock: {{ med.stock_quantity }}){% endif %}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <div class="invalid-feedback">Select medicine.</div>
+                                                </div>
+
+                                                <!-- Quantity -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Quantity (Units) *</label>
+                                                    <input type="number" class="form-control form-control-custom" name="quantity" min="1" value="1" required>
+                                                    <div class="invalid-feedback">Enter quantity.</div>
+                                                </div>
+
+                                                <!-- Instructions -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Usage Instructions</label>
+                                                    <textarea class="form-control form-control-custom" name="instructions" rows="2" placeholder="e.g. 1 tablet twice a day after meals..."></textarea>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-primary-gradient w-100 mt-2" style="background: var(--gradient-success); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
+                                                    <i class="bi bi-prescription me-2"></i>Issue Prescription
+                                                </button>
+                                            </form>
+                                            {% else %}
+                                            <p class="text-secondary text-center">No patients or medicines registered in database catalog.</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 2. Doctor's Assigned Appointments & Prescription History -->
+                                <div class="col-12 col-lg-8">
+                                    <!-- Appointments List -->
+                                    <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 16px;">
+                                        <h4 class="mb-4 fw-bold text-dark">Booked Consultations</h4>
+                                        <div class="table-responsive-custom">
+                                            <table class="table table-custom align-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Patient</th>
+                                                        <th>OP Number</th>
+                                                        <th>Date &amp; Time</th>
+                                                        <th>Reason</th>
+                                                        <th>Status</th>
+                                                        <th class="text-end">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% if appointments %}
+                                                        {% for appt in appointments %}
+                                                        <tr>
+                                                            <td class="fw-bold">{{ appt.patient.name }}</td>
+                                                            <td class="fw-semibold text-primary">{{ appt.patient.op_number }}</td>
+                                                            <td>
+                                                                <div class="d-flex flex-column">
+                                                                    <span class="fw-semibold text-dark">{{ appt.appointment_date.strftime('%d-%b-%Y') }}</span>
+                                                                    <small class="text-secondary text-xs">{{ appt.time_slot }}</small>
+                                                                </div>
+                                                            </td>
+                                                            <td><small class="text-secondary">{{ appt.reason or 'N/A' }}</small></td>
+                                                            <td>
+                                                                <span class="badge-status {{ appt.status.lower() }}">
+                                                                    {{ appt.status }}
+                                                                </span>
+                                                            </td>
+                                                            <td class="text-end actions-cell">
+                                                                <div class="d-inline-flex gap-2">
+                                                                    {% if appt.status == 'Scheduled' %}
+                                                                    <button class="btn-action text-success js-confirm-btn" data-message="Log consultation as Completed?" data-action="/appointments/complete/{{ appt.id }}" title="Complete Consultation">
+                                                                        <i class="bi bi-check-lg"></i>
+                                                                    </button>
+                                                                    <button class="btn-action btn-danger-action js-confirm-btn" data-message="Cancel this consultation?" data-action="/appointments/cancel/{{ appt.id }}" title="Cancel Appointment">
+                                                                        <i class="bi bi-x-lg"></i>
+                                                                    </button>
+                                                                    {% else %}
+                                                                    <span class="text-secondary text-xs" style="font-size: 0.75rem;"><i class="bi bi-check-all me-1"></i>Logged</span>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <tr>
+                                                            <td colspan="6" class="text-center py-4 text-secondary">No consultations scheduled with you.</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Prescriptions Issued Log -->
+                                    <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                                        <h4 class="mb-4 fw-bold text-dark">Your Prescription History</h4>
+                                        <div class="table-responsive-custom">
+                                            <table class="table table-custom align-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Patient</th>
+                                                        <th>Medicine</th>
+                                                        <th>Quantity</th>
+                                                        <th>Instructions</th>
+                                                        <th>Status</th>
+                                                        <th>Prescribed On</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% if prescriptions %}
+                                                        {% for presc in prescriptions %}
+                                                        <tr>
+                                                            <td class="fw-bold">{{ presc.patient.name }}</td>
+                                                            <td class="fw-semibold">{{ presc.medicine.name }}</td>
+                                                            <td>{{ presc.quantity }} units</td>
+                                                            <td><small class="text-secondary">{{ presc.instructions or 'N/A' }}</small></td>
+                                                            <td>
+                                                                <span class="badge-status {{ presc.status.lower() }}">
+                                                                    {{ presc.status }}
+                                                                </span>
+                                                            </td>
+                                                            <td><small class="text-secondary">{{ presc.created_at.strftime('%d-%b-%Y') }}</small></td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <tr>
+                                                            <td colspan="6" class="text-center py-4 text-secondary">No prescriptions issued yet.</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% elif session['role'] == 'patient' %}
+                        <!-- ================= PATIENT PORTAL DASHBOARD ================= -->
+                        <div class="container-fluid p-0 animate-fade-in">
+                            <div class="row g-4">
+                                <!-- 1. Patient Details Card & Booking Form -->
+                                <div class="col-12 col-lg-4">
+                                    <!-- Patient Info -->
+                                    <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 16px; background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);">
+                                        <h5 class="fw-bold text-slate-800 mb-3"><i class="bi bi-shield-lock-fill text-warning me-2"></i>Patient OP Identification</h5>
+                                        <h6 class="text-secondary mb-1">OP Registration Code:</h6>
+                                        <h4 class="fw-bold text-primary mb-3">{{ patient.op_number }}</h4>
+                                        
+                                        <h5 class="fw-bold text-dark mb-1">{{ patient.name }}</h5>
+                                        <p class="text-secondary text-sm mb-3">{{ patient.gender }}, {{ patient.age }} Years Old</p>
+                                        
+                                        <div class="text-secondary border-top pt-3" style="font-size: 0.85rem; line-height: 1.7;">
+                                            <div><i class="bi bi-envelope me-2"></i>{{ patient.email }}</div>
+                                            <div><i class="bi bi-telephone me-2"></i>{{ patient.phone }}</div>
+                                            <div><i class="bi bi-geo-alt me-2"></i>{{ patient.address or 'No address details recorded' }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quick Appointment Form -->
+                                    <div class="card form-card shadow-sm border-0">
+                                        <div class="card-header bg-white">
+                                            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-calendar-plus-fill text-warning me-2"></i>Schedule Consultation</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            {% if doctors %}
+                                            <form action="{{ url_for('appointment_book') }}" method="POST" class="needs-validation" novalidate>
+                                                <!-- Select Doctor -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Choose Doctor *</label>
+                                                    <select class="form-select form-control-custom" name="doctor_id" required>
+                                                        <option value="" selected disabled>Choose doctor...</option>
+                                                        {% for doc in doctors %}
+                                                        <option value="{{ doc.id }}">{{ doc.name }} ({{ doc.specialization }})</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <div class="invalid-feedback">Select doctor.</div>
+                                                </div>
+
+                                                <!-- Date -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Appointment Date *</label>
+                                                    <input type="date" class="form-control form-control-custom" id="apptDate" name="appointment_date" required>
+                                                    <div class="invalid-feedback">Choose date.</div>
+                                                </div>
+
+                                                <!-- Slot -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Select Time Slot *</label>
+                                                    <select class="form-select form-control-custom" name="time_slot" required>
+                                                        <option value="" selected disabled>Select slot...</option>
+                                                        <option value="09:00 AM">09:00 AM - 09:30 AM</option>
+                                                        <option value="09:30 AM">09:30 AM - 10:00 AM</option>
+                                                        <option value="10:00 AM">10:00 AM - 10:30 AM</option>
+                                                        <option value="10:30 AM">10:30 AM - 11:00 AM</option>
+                                                        <option value="11:00 AM">11:00 AM - 11:30 AM</option>
+                                                        <option value="11:30 AM">11:30 AM - 12:00 PM</option>
+                                                        <option value="12:00 PM">12:00 PM - 12:30 PM</option>
+                                                        <option value="02:00 PM">02:00 PM - 02:30 PM</option>
+                                                        <option value="02:30 PM">02:30 PM - 03:00 PM</option>
+                                                        <option value="03:00 PM">03:00 PM - 03:30 PM</option>
+                                                        <option value="03:30 PM">03:30 PM - 04:00 PM</option>
+                                                        <option value="04:00 PM">04:00 PM - 04:30 PM</option>
+                                                        <option value="04:30 PM">04:30 PM - 05:00 PM</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">Select time slot.</div>
+                                                </div>
+
+                                                <!-- Consultation Reason -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Symptoms / Reason</label>
+                                                    <textarea class="form-control form-control-custom" name="reason" rows="2" placeholder="Describe symptoms or reasons..."></textarea>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-primary-gradient w-100 mt-2" style="background: var(--gradient-warning); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);">
+                                                    <i class="bi bi-bookmark-plus-fill me-2"></i>Book Appointment
+                                                </button>
+                                            </form>
+                                            {% else %}
+                                            <p class="text-secondary text-center">No active doctors recorded in system directory.</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 2. Patient's Booked Appointments & Prescriptions History -->
+                                <div class="col-12 col-lg-8">
+                                    <!-- Appointments list -->
+                                    <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 16px;">
+                                        <h4 class="mb-4 fw-bold text-dark">My Booked Consultations</h4>
+                                        <div class="table-responsive-custom">
+                                            <table class="table table-custom align-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Doctor</th>
+                                                        <th>Specialization</th>
+                                                        <th>Date &amp; Time</th>
+                                                        <th>Reason</th>
+                                                        <th>Status</th>
+                                                        <th class="text-end">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% if appointments %}
+                                                        {% for appt in appointments %}
+                                                        <tr>
+                                                            <td class="fw-bold">{{ appt.doctor.name }}</td>
+                                                            <td>
+                                                                <span class="badge bg-primary-subtle text-primary border-0 px-2.5 py-1.5" style="border-radius: 6px; font-size: 0.8rem;">
+                                                                    {{ appt.doctor.specialization }}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <div class="d-flex flex-column">
+                                                                    <span class="fw-semibold text-dark">{{ appt.appointment_date.strftime('%d-%b-%Y') }}</span>
+                                                                    <small class="text-secondary text-xs">{{ appt.time_slot }}</small>
+                                                                </div>
+                                                            </td>
+                                                            <td><small class="text-secondary">{{ appt.reason or 'N/A' }}</small></td>
+                                                            <td>
+                                                                <span class="badge-status {{ appt.status.lower() }}">
+                                                                    {{ appt.status }}
+                                                                </span>
+                                                            </td>
+                                                            <td class="text-end actions-cell">
+                                                                <div class="d-inline-flex gap-2">
+                                                                    {% if appt.status == 'Scheduled' %}
+                                                                    <button class="btn-action btn-danger-action js-confirm-btn" data-message="Cancel this appointment?" data-action="/appointments/cancel/{{ appt.id }}" title="Cancel Appointment">
+                                                                        <i class="bi bi-x-lg"></i>
+                                                                    </button>
+                                                                    {% else %}
+                                                                    <span class="text-secondary text-xs" style="font-size: 0.75rem;"><i class="bi bi-check-all me-1"></i>Logged</span>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <tr>
+                                                            <td colspan="6" class="text-center py-4 text-secondary">No appointments booked yet.</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Prescribed Medications -->
+                                    <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                                        <h4 class="mb-4 fw-bold text-dark">My Prescribed Medicines</h4>
+                                        <div class="table-responsive-custom">
+                                            <table class="table table-custom align-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Prescribed Doctor</th>
+                                                        <th>Medicine Name</th>
+                                                        <th>Quantity</th>
+                                                        <th>Instructions</th>
+                                                        <th>Request Status</th>
+                                                        <th>Date Prescribed</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% if prescriptions %}
+                                                        {% for presc in prescriptions %}
+                                                        <tr>
+                                                            <td class="fw-bold">{{ presc.doctor.name }}</td>
+                                                            <td class="fw-semibold text-primary">{{ presc.medicine.name }}</td>
+                                                            <td>{{ presc.quantity }} units</td>
+                                                            <td><small class="text-secondary">{{ presc.instructions or 'N/A' }}</small></td>
+                                                            <td>
+                                                                <span class="badge-status {{ presc.status.lower() }}">
+                                                                    {{ presc.status }}
+                                                                </span>
+                                                            </td>
+                                                            <td><small class="text-secondary">{{ presc.created_at.strftime('%d-%b-%Y') }}</small></td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <tr>
+                                                            <td colspan="6" class="text-center py-4 text-secondary">No medicine prescriptions found.</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                {% elif active_page == 'patients' %}
+                    <!-- ----------------- 2. PATIENTS VIEW (ADMIN ONLY) ----------------- -->
+                    <div class="container-fluid p-0 animate-fade-in">
+                        <div class="row g-4">
+                            <div class="col-12 col-lg-4">
+                                <div class="card form-card shadow-sm border-0">
+                                    <div class="card-header bg-white">
+                                        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-person-plus-fill text-primary me-2"></i>OP Patient Registration</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="{{ url_for('patient_register') }}" method="POST" class="needs-validation" novalidate>
+                                            <div class="mb-3">
+                                                <label class="form-label">Full Name *</label>
+                                                <input type="text" class="form-control form-control-custom" name="name" required placeholder="e.g. John Doe">
+                                                <div class="invalid-feedback">Patient name is required.</div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-6">
+                                                    <label class="form-label">Age *</label>
+                                                    <input type="number" class="form-control form-control-custom" name="age" min="0" max="150" required placeholder="e.g. 35">
+                                                    <div class="invalid-feedback">Valid age is required.</div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label">Gender *</label>
+                                                    <select class="form-select form-control-custom" name="gender" required>
+                                                        <option value="" selected disabled>Select</option>
+                                                        <option value="Male">Male</option>
+                                                        <option value="Female">Female</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">Select gender.</div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Phone Number *</label>
+                                                <input type="tel" class="form-control form-control-custom" name="phone" required placeholder="e.g. +1-555-0123">
+                                                <div class="invalid-feedback">Contact number is required.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Email Address *</label>
+                                                <input type="email" class="form-control form-control-custom" name="email" required placeholder="e.g. john@email.com">
+                                                <div class="invalid-feedback">Unique email is required for login access.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Portal Sign-in Password</label>
+                                                <input type="text" class="form-control form-control-custom" name="password" placeholder="Defaults to 'patient123' if blank">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Residential Address</label>
+                                                <textarea class="form-control form-control-custom" name="address" rows="2" placeholder="Enter complete address details..."></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary-gradient w-100 mt-2">
+                                                <i class="bi bi-person-check-fill me-2"></i>Register Patient
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 col-lg-8">
+                                <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                                        <h4 class="mb-0 fw-bold text-dark">Registered OP Patients</h4>
+                                        <form action="{{ url_for('patients_list') }}" method="GET" class="d-flex gap-2">
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white border-end-0" style="border-color: var(--slate-200); border-radius: 8px 0 0 8px;"><i class="bi bi-search text-secondary"></i></span>
+                                                <input type="text" class="form-control border-start-0 js-live-search" data-target-table="patientsTable" name="q" value="{{ search_query or '' }}" placeholder="Live search..." style="border-color: var(--slate-200); border-radius: 0 8px 8px 0; max-width: 250px; font-size: 0.9rem;">
+                                            </div>
+                                            {% if search_query %}
+                                                <a href="{{ url_for('patients_list') }}" class="btn btn-light" style="border-radius: 8px;"><i class="bi bi-x-lg"></i></a>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                    
+                                    <div class="table-responsive-custom">
+                                        <table class="table table-custom align-middle" id="patientsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>OP Number</th>
+                                                    <th>Patient Name</th>
+                                                    <th>Age/Gender</th>
+                                                    <th>Phone</th>
+                                                    <th>Login Email / Pass</th>
+                                                    <th class="text-end">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% if patients %}
+                                                    {% for patient in patients %}
+                                                    <tr>
+                                                        <td class="fw-bold text-primary">{{ patient.op_number }}</td>
+                                                        <td><span class="fw-semibold text-slate-800">{{ patient.name }}</span></td>
+                                                        <td>{{ patient.age }} yrs / {{ patient.gender }}</td>
+                                                        <td>{{ patient.phone }}</td>
+                                                        <td>
+                                                            <div class="d-flex flex-column text-xs" style="font-size:0.8rem;">
+                                                                <span class="text-secondary"><i class="bi bi-envelope me-1"></i>{{ patient.email }}</span>
+                                                                <span class="text-secondary"><i class="bi bi-key me-1"></i>{{ patient.password }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-end actions-cell">
+                                                            <div class="d-inline-flex gap-2">
+                                                                <button class="btn-action" data-bs-toggle="modal" data-bs-target="#editModal{{ patient.id }}" title="Edit Details">
+                                                                    <i class="bi bi-pencil-fill"></i>
+                                                                </button>
+                                                                <button class="btn-action btn-danger-action js-confirm-btn" data-message="Are you sure you want to delete patient {{ patient.name }}? This will cancel their appointments." data-action="/patients/delete/{{ patient.id }}" title="Delete Patient">
+                                                                    <i class="bi bi-trash-fill"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <!-- Edit Modal -->
+                                                    <div class="modal fade" id="editModal{{ patient.id }}" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+                                                                <div class="modal-header border-bottom border-light">
+                                                                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square text-primary me-2"></i>Edit Patient Details</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form action="{{ url_for('patient_edit', id=patient.id) }}" method="POST" class="needs-validation" novalidate>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Full Name *</label>
+                                                                            <input type="text" class="form-control form-control-custom" name="name" value="{{ patient.name }}" required>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <div class="col-6">
+                                                                                <label class="form-label">Age *</label>
+                                                                                <input type="number" class="form-control form-control-custom" name="age" value="{{ patient.age }}" min="0" required>
+                                                                            </div>
+                                                                            <div class="col-6">
+                                                                                <label class="form-label">Gender *</label>
+                                                                                <select class="form-select form-control-custom" name="gender" required>
+                                                                                    <option value="Male" {% if patient.gender == 'Male' %}selected{% endif %}>Male</option>
+                                                                                    <option value="Female" {% if patient.gender == 'Female' %}selected{% endif %}>Female</option>
+                                                                                    <option value="Other" {% if patient.gender == 'Other' %}selected{% endif %}>Other</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Phone Number *</label>
+                                                                            <input type="tel" class="form-control form-control-custom" name="phone" value="{{ patient.phone }}" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Email Address *</label>
+                                                                            <input type="email" class="form-control form-control-custom" name="email" value="{{ patient.email }}" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Portal Sign-in Password</label>
+                                                                            <input type="text" class="form-control form-control-custom" name="password" placeholder="Leave empty to keep current">
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Residential Address</label>
+                                                                            <textarea class="form-control form-control-custom" name="address" rows="2">{{ patient.address or '' }}</textarea>
+                                                                        </div>
+                                                                        <div class="modal-footer border-top border-light px-0 pb-0">
+                                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 8px;">Cancel</button>
+                                                                            <button type="submit" class="btn btn-primary-gradient" style="border-radius: 8px;">Save Changes</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <tr>
+                                                        <td colspan="6" class="text-center py-5 text-secondary">
+                                                            <i class="bi bi-people fs-2 mb-3 d-block text-slate-300"></i> No patient records found.
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                {% elif active_page == 'doctors' %}
+                    <!-- ----------------- 3. DOCTORS VIEW (ADMIN ONLY) ----------------- -->
+                    <div class="container-fluid p-0 animate-fade-in">
+                        <div class="row g-4">
+                            <div class="col-12 col-lg-4">
+                                <div class="card form-card shadow-sm border-0">
+                                    <div class="card-header bg-white">
+                                        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-person-badge-fill text-success me-2"></i>Add Doctor Profile</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="{{ url_for('doctor_add') }}" method="POST" class="needs-validation" novalidate>
+                                            <div class="mb-3">
+                                                <label class="form-label">Doctor Name *</label>
+                                                <input type="text" class="form-control form-control-custom" name="name" required placeholder="e.g. Dr. Jane Foster">
+                                                <div class="invalid-feedback">Doctor name is required.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Specialization *</label>
+                                                <input type="text" class="form-control form-control-custom" name="specialization" required placeholder="e.g. Pediatrics, Cardiology">
+                                                <div class="invalid-feedback">Specialization is required.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Contact Phone *</label>
+                                                <input type="tel" class="form-control form-control-custom" name="phone" required placeholder="e.g. +1-555-0999">
+                                                <div class="invalid-feedback">Valid contact number is required.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Email Address *</label>
+                                                <input type="email" class="form-control form-control-custom" name="email" required placeholder="e.g. foster@hospital.com">
+                                                <div class="invalid-feedback">Email is required for doctor portal login access.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Portal Sign-in Password</label>
+                                                <input type="text" class="form-control form-control-custom" name="password" placeholder="Defaults to 'doctor123' if blank">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Availability / Hours</label>
+                                                <input type="text" class="form-control form-control-custom" name="availability" placeholder="e.g. Mon-Sat (9:00 AM - 5:00 PM)">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary-gradient w-100 mt-2" style="background: var(--gradient-success); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
+                                                <i class="bi bi-check-circle-fill me-2"></i>Add Doctor
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 col-lg-8">
+                                <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                                        <h4 class="mb-0 fw-bold text-dark">Doctors Directory</h4>
+                                        <div class="input-group" style="max-width: 250px;">
+                                            <span class="input-group-text bg-white border-end-0" style="border-color: var(--slate-200); border-radius: 8px 0 0 8px;"><i class="bi bi-search text-secondary"></i></span>
+                                            <input type="text" class="form-control border-start-0 js-live-search" data-target-table="doctorsTable" placeholder="Filter doctors..." style="border-color: var(--slate-200); border-radius: 0 8px 8px 0; font-size: 0.9rem;">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="table-responsive-custom">
+                                        <table class="table table-custom align-middle" id="doctorsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Doctor Name</th>
+                                                    <th>Specialization</th>
+                                                    <th>Contact Information</th>
+                                                    <th>Credentials</th>
+                                                    <th class="text-end">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% if doctors %}
+                                                    {% for doctor in doctors %}
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 38px; height: 38px; font-weight: bold;">
+                                                                    DR
+                                                                </div>
+                                                                <span class="fw-bold text-slate-800">{{ doctor.name }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge bg-primary-subtle text-primary border-0 px-2.5 py-1.5" style="font-size: 0.8rem; border-radius: 6px;">
+                                                                {{ doctor.specialization }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex flex-column" style="font-size: 0.85rem;">
+                                                                <span><i class="bi bi-telephone text-secondary me-1.5"></i>{{ doctor.phone }}</span>
+                                                                <span class="text-secondary"><i class="bi bi-clock text-secondary me-1.5"></i>{{ doctor.availability }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex flex-column text-xs" style="font-size:0.8rem;">
+                                                                <span class="text-secondary"><i class="bi bi-envelope me-1"></i>{{ doctor.email }}</span>
+                                                                <span class="text-secondary"><i class="bi bi-key me-1"></i>{{ doctor.password }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-end actions-cell">
+                                                            <div class="d-inline-flex gap-2">
+                                                                <button class="btn-action" data-bs-toggle="modal" data-bs-target="#editDocModal{{ doctor.id }}" title="Edit Details">
+                                                                    <i class="bi bi-pencil-fill"></i>
+                                                                </button>
+                                                                <button class="btn-action btn-danger-action js-confirm-btn" data-message="Are you sure you want to delete doctor profile for {{ doctor.name }}? This will cancel their scheduled appointments." data-action="/doctors/delete/{{ doctor.id }}" title="Delete Doctor">
+                                                                    <i class="bi bi-trash-fill"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <!-- Edit Doc Modal -->
+                                                    <div class="modal fade" id="editDocModal{{ doctor.id }}" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+                                                                <div class="modal-header border-bottom border-light">
+                                                                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square text-success me-2"></i>Edit Doctor Profile</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form action="{{ url_for('doctor_edit', id=doctor.id) }}" method="POST" class="needs-validation" novalidate>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Doctor Name *</label>
+                                                                            <input type="text" class="form-control form-control-custom" name="name" value="{{ doctor.name }}" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Specialization *</label>
+                                                                            <input type="text" class="form-control form-control-custom" name="specialization" value="{{ doctor.specialization }}" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Contact Phone *</label>
+                                                                            <input type="tel" class="form-control form-control-custom" name="phone" value="{{ doctor.phone }}" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Email Address *</label>
+                                                                            <input type="email" class="form-control form-control-custom" name="email" value="{{ doctor.email }}" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Portal Sign-in Password</label>
+                                                                            <input type="text" class="form-control form-control-custom" name="password" placeholder="Leave empty to keep current">
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Availability Schedule</label>
+                                                                            <input type="text" class="form-control form-control-custom" name="availability" value="{{ doctor.availability }}">
+                                                                        </div>
+                                                                        <div class="modal-footer border-top border-light px-0 pb-0">
+                                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 8px;">Cancel</button>
+                                                                            <button type="submit" class="btn btn-success text-white" style="border-radius: 8px; background: var(--gradient-success); border: none;">Save Changes</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <tr>
+                                                        <td colspan="5" class="text-center py-5 text-secondary">
+                                                            <i class="bi bi-person-badge fs-2 mb-3 d-block text-slate-300"></i> No doctors added.
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                {% elif active_page == 'appointments' %}
+                    <!-- ----------------- 4. APPOINTMENTS LOG (ADMIN ONLY) ----------------- -->
+                    <div class="container-fluid p-0 animate-fade-in">
+                        <div class="row g-4">
+                            <!-- Booking panel -->
+                            <div class="col-12 col-lg-4">
+                                <div class="card form-card shadow-sm border-0">
+                                    <div class="card-header bg-white">
+                                        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-calendar-plus-fill text-warning me-2"></i>Book Patient Appointment</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        {% if patients and doctors %}
+                                        <form action="{{ url_for('appointment_book') }}" method="POST" class="needs-validation" novalidate>
+                                            <div class="mb-3">
+                                                <label class="form-label">Select Patient *</label>
+                                                <select class="form-select form-control-custom" name="patient_id" required>
+                                                    <option value="" selected disabled>Choose patient...</option>
+                                                    {% for patient in patients %}
+                                                    <option value="{{ patient.id }}">{{ patient.name }} ({{ patient.op_number }})</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback">Select a registered patient.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Select Doctor *</label>
+                                                <select class="form-select form-control-custom" name="doctor_id" required>
+                                                    <option value="" selected disabled>Choose doctor...</option>
+                                                    {% for doctor in doctors %}
+                                                    <option value="{{ doctor.id }}">{{ doctor.name }} ({{ doctor.specialization }})</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback">Please select a doctor.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Appointment Date *</label>
+                                                <input type="date" class="form-control form-control-custom" id="apptDateAdmin" name="appointment_date" required>
+                                                <div class="invalid-feedback">Select appointment date.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Select Time Slot *</label>
+                                                <select class="form-select form-control-custom" name="time_slot" required>
+                                                    <option value="" selected disabled>Select slot...</option>
+                                                    <option value="09:00 AM">09:00 AM - 09:30 AM</option>
+                                                    <option value="09:30 AM">09:30 AM - 10:00 AM</option>
+                                                    <option value="10:00 AM">10:00 AM - 10:30 AM</option>
+                                                    <option value="10:30 AM">10:30 AM - 11:00 AM</option>
+                                                    <option value="11:00 AM">11:00 AM - 11:30 AM</option>
+                                                    <option value="11:30 AM">11:30 AM - 12:00 PM</option>
+                                                    <option value="12:00 PM">12:00 PM - 12:30 PM</option>
+                                                    <option value="02:00 PM">02:00 PM - 02:30 PM</option>
+                                                    <option value="02:30 PM">02:30 PM - 03:00 PM</option>
+                                                    <option value="03:00 PM">03:00 PM - 03:30 PM</option>
+                                                    <option value="03:30 PM">03:30 PM - 04:00 PM</option>
+                                                    <option value="04:00 PM">04:00 PM - 04:30 PM</option>
+                                                    <option value="04:30 PM">04:30 PM - 05:00 PM</option>
+                                                </select>
+                                                <div class="invalid-feedback">Select scheduling slot.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Consultation Reason / Symptoms</label>
+                                                <textarea class="form-control form-control-custom" name="reason" rows="3" placeholder="Describe clinical symptoms..."></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary-gradient w-100 mt-2" style="background: var(--gradient-warning); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);">
+                                                <i class="bi bi-bookmark-plus-fill me-2"></i>Book Appointment
+                                            </button>
+                                        </form>
+                                        {% else %}
+                                        <p class="text-secondary text-center">To book appointments, you must have at least one patient and one doctor registered.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 col-lg-8">
+                                <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                                        <h4 class="mb-0 fw-bold text-dark">Appointment Records</h4>
+                                        <div class="input-group" style="max-width: 250px;">
+                                            <span class="input-group-text bg-white border-end-0" style="border-color: var(--slate-200); border-radius: 8px 0 0 8px;"><i class="bi bi-search text-secondary"></i></span>
+                                            <input type="text" class="form-control border-start-0 js-live-search" data-target-table="apptTable" placeholder="Filter appointments..." style="border-color: var(--slate-200); border-radius: 0 8px 8px 0; font-size: 0.9rem;">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="table-responsive-custom">
+                                        <table class="table table-custom align-middle" id="apptTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Patient Details</th>
+                                                    <th>Doctor</th>
+                                                    <th>Date &amp; Time</th>
+                                                    <th>Reason</th>
+                                                    <th>Status</th>
+                                                    <th class="text-end">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% if appointments %}
+                                                    {% for appt in appointments %}
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex flex-column">
+                                                                <span class="fw-bold text-slate-800">{{ appt.patient.name }}</span>
+                                                                <span class="text-primary text-xs fw-semibold" style="font-size: 0.75rem;">{{ appt.patient.op_number }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex flex-column">
+                                                                <span class="fw-semibold text-slate-800">{{ appt.doctor.name }}</span>
+                                                                <span class="text-secondary text-xs" style="font-size: 0.75rem;">{{ appt.doctor.specialization }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex flex-column">
+                                                                <span class="fw-semibold text-dark">{{ appt.appointment_date.strftime('%d-%b-%Y') }}</span>
+                                                                <small class="text-secondary text-xs">{{ appt.time_slot }}</small>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-secondary text-truncate" style="max-width: 150px; font-size: 0.85rem;" title="{{ appt.reason or 'N/A' }}">
+                                                            {{ appt.reason or 'N/A' }}
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge-status {{ appt.status.lower() }}">
+                                                                    {{ appt.status }}
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-end actions-cell">
+                                                            <div class="d-inline-flex gap-2">
+                                                                {% if appt.status == 'Scheduled' %}
+                                                                <button class="btn-action text-success js-confirm-btn" data-message="Mark appointment as completed?" data-action="/appointments/complete/{{ appt.id }}" title="Mark Completed">
+                                                                    <i class="bi bi-check-lg"></i>
+                                                                </button>
+                                                                <button class="btn-action btn-danger-action js-confirm-btn" data-message="Cancel appointment?" data-action="/appointments/cancel/{{ appt.id }}" title="Cancel Appointment">
+                                                                    <i class="bi bi-x-lg"></i>
+                                                                </button>
+                                                                {% else %}
+                                                                <span class="text-secondary text-xs" style="font-size: 0.75rem;"><i class="bi bi-check-all me-1"></i>Logged</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <tr>
+                                                        <td colspan="6" class="text-center py-5 text-secondary">
+                                                            <i class="bi bi-calendar-event fs-2 mb-3 d-block text-slate-300"></i> No appointments booked.
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                {% elif active_page == 'medicines' %}
+                    <!-- ----------------- 5. MEDICINES VIEW (ADMIN ONLY) ----------------- -->
+                    <div class="container-fluid p-0 animate-fade-in">
+                        <div class="row g-4">
+                            <div class="col-12 col-lg-4">
+                                <div class="card form-card shadow-sm border-0">
+                                    <div class="card-header bg-white">
+                                        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-capsule text-info me-2"></i>Add Medicine</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="{{ url_for('medicine_add') }}" method="POST" class="needs-validation" novalidate>
+                                            <div class="mb-3">
+                                                <label class="form-label">Medicine Name *</label>
+                                                <input type="text" class="form-control form-control-custom" name="name" required placeholder="e.g. Ibuprofen 400mg">
+                                                <div class="invalid-feedback">Medicine name is required.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Batch Number *</label>
+                                                <input type="text" class="form-control form-control-custom" name="batch_number" required placeholder="e.g. BTC-IBU02">
+                                                <div class="invalid-feedback">Batch number is required.</div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-6">
+                                                    <label class="form-label">Quantity *</label>
+                                                    <input type="number" class="form-control form-control-custom" name="stock_quantity" min="0" required placeholder="e.g. 150">
+                                                    <div class="invalid-feedback">Required.</div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label">Price / Unit ($) *</label>
+                                                    <input type="number" class="form-control form-control-custom" name="price" step="0.01" min="0" required placeholder="e.g. 3.50">
+                                                    <div class="invalid-feedback">Required.</div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Expiry Date *</label>
+                                                <input type="date" class="form-control form-control-custom" name="expiry_date" required>
+                                                <div class="invalid-feedback">Expiry date required.</div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary-gradient w-100 mt-2" style="background: var(--gradient-info); box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2);">
+                                                <i class="bi bi-plus-circle-fill me-2"></i>Add Inventory
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 col-lg-8">
+                                <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                                        <h4 class="mb-0 fw-bold text-dark">Pharmacy Catalog</h4>
+                                        <form action="{{ url_for('medicines_list') }}" method="GET" class="d-flex gap-2">
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white border-end-0" style="border-color: var(--slate-200); border-radius: 8px 0 0 8px;"><i class="bi bi-search text-secondary"></i></span>
+                                                <input type="text" class="form-control border-start-0 js-live-search" data-target-table="medicineTable" name="q" value="{{ search_query or '' }}" placeholder="Live search catalog..." style="border-color: var(--slate-200); border-radius: 0 8px 8px 0; max-width: 250px; font-size: 0.9rem;">
+                                            </div>
+                                            {% if search_query %}
+                                                <a href="{{ url_for('medicines_list') }}" class="btn btn-light" style="border-radius: 8px;"><i class="bi bi-x-lg"></i></a>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                    
+                                    <div class="table-responsive-custom">
+                                        <table class="table table-custom align-middle" id="medicineTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Medicine Name</th>
+                                                    <th>Batch No.</th>
+                                                    <th>Stock Status</th>
+                                                    <th>Price / Unit</th>
+                                                    <th>Expiry Date</th>
+                                                    <th class="text-end">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% if medicines %}
+                                                    {% for med in medicines %}
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="bg-info-subtle text-info rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 38px; height: 38px;">
+                                                                    <i class="bi bi-capsule-pill fs-5"></i>
+                                                                </div>
+                                                                <span class="fw-bold text-slate-800">{{ med.name }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="fw-semibold text-secondary" style="font-size: 0.85rem;">{{ med.batch_number }}</td>
+                                                        <td>
+                                                            {% if med.stock_quantity < 10 %}
+                                                                <span class="badge bg-danger-subtle text-danger px-2.5 py-1.5 border-0" style="font-size: 0.8rem; border-radius: 6px; font-weight: 600;">
+                                                                    Low Stock: {{ med.stock_quantity }}
+                                                                </span>
+                                                            {% else %}
+                                                                <span class="badge bg-success-subtle text-success px-2.5 py-1.5 border-0" style="font-size: 0.8rem; border-radius: 6px; font-weight: 600;">
+                                                                    {{ med.stock_quantity }} units
+                                                                </span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="fw-bold text-dark">${{ "%.2f" | format(med.price) }}</td>
+                                                        <td>
+                                                            <div class="d-flex flex-column" style="font-size: 0.85rem;">
+                                                                <span class="fw-semibold text-slate-800">{{ med.expiry_date.strftime('%d-%b-%Y') }}</span>
+                                                                {% if date_today and med.expiry_date < date_today %}
+                                                                    <small class="text-danger fw-bold text-xs"><i class="bi bi-exclamation-triangle-fill"></i> Expired</small>
+                                                                {% endif %}
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-end actions-cell">
+                                                            <div class="d-inline-flex gap-2">
+                                                                <button class="btn-action" data-bs-toggle="modal" data-bs-target="#editMedModal{{ med.id }}" title="Edit Details">
+                                                                    <i class="bi bi-pencil-fill"></i>
+                                                                </button>
+                                                                <button class="btn-action" data-bs-toggle="modal" data-bs-target="#restockModal{{ med.id }}" title="Quick Restock" style="color: var(--info); border-color: rgba(6, 182, 212, 0.2);">
+                                                                    <i class="bi bi-box-seam-fill"></i>
+                                                                </button>
+                                                                <button class="btn-action btn-danger-action js-confirm-btn" data-message="Are you sure you want to delete {{ med.name }} from records?" data-action="/medicines/delete/{{ med.id }}" title="Delete Medicine">
+                                                                    <i class="bi bi-trash-fill"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <!-- Edit Medicine Modal -->
+                                                    <div class="modal fade" id="editMedModal{{ med.id }}" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+                                                                <div class="modal-header border-bottom border-light">
+                                                                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square text-info me-2"></i>Edit Medicine Details</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form action="{{ url_for('medicine_edit', id=med.id) }}" method="POST" class="needs-validation" novalidate>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Medicine Name *</label>
+                                                                            <input type="text" class="form-control form-control-custom" name="name" value="{{ med.name }}" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Batch Number *</label>
+                                                                            <input type="text" class="form-control form-control-custom" name="batch_number" value="{{ med.batch_number }}" required>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <div class="col-6">
+                                                                                <label class="form-label">Quantity *</label>
+                                                                                <input type="number" class="form-control form-control-custom" name="stock_quantity" value="{{ med.stock_quantity }}" min="0" required>
+                                                                            </div>
+                                                                            <div class="col-6">
+                                                                                <label class="form-label">Price ($) *</label>
+                                                                                <input type="number" class="form-control form-control-custom" name="price" value="{{ med.price }}" step="0.01" min="0" required>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Expiry Date *</label>
+                                                                            <input type="date" class="form-control form-control-custom" name="expiry_date" value="{{ med.expiry_date.strftime('%Y-%m-%d') }}" required>
+                                                                        </div>
+                                                                        <div class="modal-footer border-top border-light px-0 pb-0">
+                                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 8px;">Cancel</button>
+                                                                            <button type="submit" class="btn btn-info text-white" style="border-radius: 8px; background: var(--gradient-info); border: none;">Save Changes</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Quick Restock Modal -->
+                                                    <div class="modal fade" id="restockModal{{ med.id }}" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                                                            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+                                                                <div class="modal-header border-bottom border-light">
+                                                                    <h5 class="modal-title fw-bold"><i class="bi bi-box-seam-fill text-info me-2"></i>Quick Restock</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form action="{{ url_for('medicine_update_stock', id=med.id) }}" method="POST">
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label fw-bold">{{ med.name }}</label>
+                                                                            <div class="input-group">
+                                                                                <input type="number" class="form-control form-control-custom" name="stock_quantity" value="{{ med.stock_quantity }}" min="0" required>
+                                                                                <span class="input-group-text bg-light text-secondary">units</span>
+                                                                            </div>
+                                                                            <small class="text-secondary text-xs mt-1.5 d-block">Adjust current quantity.</small>
+                                                                        </div>
+                                                                        <div class="d-flex justify-content-end gap-2">
+                                                                            <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal" style="border-radius: 6px;">Close</button>
+                                                                            <button type="submit" class="btn btn-info text-white btn-sm" style="border-radius: 6px; background: var(--gradient-info); border: none;">Update Stock</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <tr>
+                                                        <td colspan="6" class="text-center py-5 text-secondary">
+                                                            <i class="bi bi-capsule fs-2 mb-3 d-block text-slate-300"></i> No medicines found.
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                {% elif active_page == 'prescriptions' %}
+                    <!-- ----------------- 6. PRESCRIPTIONS MANAGEMENT (ADMIN ONLY) ----------------- -->
+                    <div class="container-fluid p-0 animate-fade-in">
+                        <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                                <h4 class="mb-0 fw-bold text-dark">Prescription Fulfillment Logs</h4>
+                                <div class="input-group" style="max-width: 250px;">
+                                    <span class="input-group-text bg-white border-end-0" style="border-color: var(--slate-200); border-radius: 8px 0 0 8px;"><i class="bi bi-search text-secondary"></i></span>
+                                    <input type="text" class="form-control border-start-0 js-live-search" data-target-table="adminPrescriptionsTable" placeholder="Filter requests..." style="border-color: var(--slate-200); border-radius: 0 8px 8px 0; font-size: 0.9rem;">
+                                </div>
+                            </div>
+                            
+                            <div class="table-responsive-custom">
+                                <table class="table table-custom align-middle" id="adminPrescriptionsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Patient</th>
+                                            <th>OP Number</th>
+                                            <th>Prescribed Doctor</th>
+                                            <th>Medicine</th>
+                                            <th>Quantity</th>
+                                            <th>Instructions</th>
+                                            <th>Fulfillment</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if prescriptions %}
+                                            {% for presc in prescriptions %}
+                                            <tr>
+                                                <td class="fw-bold">{{ presc.patient.name }}</td>
+                                                <td class="fw-semibold text-primary">{{ presc.patient.op_number }}</td>
+                                                <td>{{ presc.doctor.name }}</td>
+                                                <td class="fw-bold text-slate-800">{{ presc.medicine.name }}</td>
+                                                <td>{{ presc.quantity }} units</td>
+                                                <td><small class="text-secondary">{{ presc.instructions or 'N/A' }}</small></td>
+                                                <td>
+                                                    <span class="badge-status {{ presc.status.lower() }}">
+                                                        {{ presc.status }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-end actions-cell">
+                                                    {% if presc.status == 'Pending' %}
+                                                    <button class="btn btn-sm btn-primary-gradient px-3 py-1.5 js-confirm-btn" style="border-radius:6px; font-size:0.85rem;" data-message="Fulfill and dispense {{ presc.quantity }} units of {{ presc.medicine.name }}? This will deduct the inventory levels." data-action="/prescriptions/dispense/{{ presc.id }}">
+                                                        <i class="bi bi-box-seam me-1"></i> Dispense
+                                                    </button>
+                                                    {% else %}
+                                                    <span class="text-secondary text-xs" style="font-size:0.8rem;"><i class="bi bi-check2-all me-1"></i>Dispensed</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="8" class="text-center py-5 text-secondary">
+                                                    <i class="bi bi-prescription fs-2 mb-3 d-block text-slate-300"></i> No prescription requests submitted yet.
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                
+            </main>
+            
+            <!-- Standard Footer -->
+            <footer class="app-footer">
+                <p>&copy; 2026 CareSync. Built for College Resume Project. Designed for Seamless UX.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <!-- Custom JS Scripts -->
+    <script>
+        /* global bootstrap */
+        
+        // Auto-fill and copy credentials utility
+        function copyCredentials(username, password, role) {
+            // 1. Switch to the appropriate tab first
+            const tabEl = document.getElementById(role + '-tab');
+            if (tabEl) {
+                const tab = bootstrap.Tab.getOrCreateInstance(tabEl);
+                tab.show();
+            }
+            
+            // 2. Set timeout to allow transition, then fill fields
+            setTimeout(() => {
+                const panel = document.getElementById(role + '-panel');
+                if (panel) {
+                    const usernameInput = panel.querySelector('input[name="username"]');
+                    const passwordInput = panel.querySelector('input[name="password"]');
+                    if (usernameInput) usernameInput.value = username;
+                    if (passwordInput) passwordInput.value = password;
+                }
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(username).then(() => {
+                    console.log('Credentials loaded for role:', role);
+                });
+            }, 150);
+        }
+
+        // CareSync Hospital Management System - Custom JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Update Clock/Date Widget in Header
+            initDateWidget();
+            
+            // 2. Setup Instant Table Search (Client-Side Filtering)
+            initTableSearch();
+            
+            // 3. Automated Alert Fadeout
+            initAlertDismissal();
+            
+            // 4. Form Submissions & Specializations Check
+            initFormValidations();
+            
+            // 5. Booking Date Default Configuration
+            initBookingDateDefault();
+        });
+
+        // Sidebar Toggle Function (Mobile View)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('appSidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('show');
+            }
+        }
+
+        // Clock Widget
+        function initDateWidget() {
+            const dateElement = document.getElementById('currentDate');
+            if (!dateElement) return;
+            
+            function updateDate() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'short', 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                };
+                dateElement.textContent = now.toLocaleDateString('en-US', options);
+            }
+            
+            updateDate();
+            setInterval(updateDate, 1000);
+        }
+
+        // Live client-side table filter
+        function initTableSearch() {
+            const searchInputs = document.querySelectorAll('.js-live-search');
+            
+            searchInputs.forEach(input => {
+                const targetTableId = input.getAttribute('data-target-table');
+                const table = document.getElementById(targetTableId);
+                if (!table) return;
+                
+                input.addEventListener('keyup', function() {
+                    const filter = input.value.toLowerCase();
+                    const rows = table.querySelectorAll('tbody tr');
+                    
+                    rows.forEach(row => {
+                        let match = false;
+                        const cells = row.querySelectorAll('td');
+                        
+                        cells.forEach(cell => {
+                            if (!cell.classList.contains('actions-cell')) {
+                                if (cell.textContent.toLowerCase().indexOf(filter) > -1) {
+                                    match = true;
+                                }
+                            }
+                        });
+                        
+                        if (match) {
+                            row.style.display = '';
+                            row.classList.add('animate-fade-in');
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        }
+
+        // Automatically fade out alerts
+        function initAlertDismissal() {
+            const alerts = document.querySelectorAll('.custom-alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                    if (bsAlert) {
+                        bsAlert.close();
+                    }
+                }, 6000);
+            });
+        }
+
+        // Client-side validations
+        function initFormValidations() {
+            const forms = document.querySelectorAll('.needs-validation');
+            
+            forms.forEach(form => {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }
+
+        // Default appointment booking calendar dates
+        function initBookingDateDefault() {
+            const apptDateInputs = [
+                document.getElementById('apptDate'),
+                document.getElementById('apptDateAdmin')
+            ];
+            
+            apptDateInputs.forEach(apptDateInput => {
+                if (apptDateInput) {
+                    const today = new Date().toISOString().split('T')[0];
+                    apptDateInput.setAttribute('min', today);
+                    if (!apptDateInput.value) {
+                        apptDateInput.value = today;
+                    }
+                }
+            });
+        }
+
+        // Setup global click listeners for confirm actions and dynamic autofill
+        document.addEventListener('click', function(e) {
+            // 1. Confirm dialog triggers
+            const confirmBtn = e.target.closest('.js-confirm-btn');
+            if (confirmBtn) {
+                const message = confirmBtn.getAttribute('data-message');
+                const action = confirmBtn.getAttribute('data-action');
+                if (confirm(message)) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = action;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+            
+            // 2. Credentials copy & autofill triggers
+            const autofillBtn = e.target.closest('.js-copy-autofill-btn');
+            if (autofillBtn) {
+                const username = autofillBtn.getAttribute('data-username');
+                const password = autofillBtn.getAttribute('data-password');
+                const role = autofillBtn.getAttribute('data-role');
+                copyCredentials(username, password, role);
+            }
+        });
+    </script>
+</body>
+</html>
